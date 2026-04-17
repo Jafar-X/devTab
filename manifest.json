@@ -4,6 +4,6 @@
   "version": "1.0",
   "description": "A developer new tab with HTTP codes, code snippets, trivia, and quizzes.",
   "chrome_url_overrides": {
-    "newtab": "newtab.html"
+    "newtab": "devtab.html"
   }
 }
