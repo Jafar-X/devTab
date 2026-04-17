@@ -68,13 +68,13 @@ No frameworks. No build tools. No server. Just HTML, CSS, and JavaScript.
 
 Every new tab (and every `→` click) picks a random content type and a random difficulty level — no fixed cycle, no user setting required.
 
-| Type | What you see |
-|------|-------------|
-| HTTP Code | Status code with explanation and example |
-| Code Snippet | Practical code with syntax highlighting |
-| Dev Trivia | Programming history and lore |
-| Math Trivia | Logic and CS mathematics |
-| Quiz | Multiple choice with instant feedback |
+| Type         | What you see                             |
+| ------------ | ---------------------------------------- |
+| HTTP Code    | Status code with explanation and example |
+| Code Snippet | Practical code with syntax highlighting  |
+| Dev Trivia   | Programming history and lore             |
+| Math Trivia  | Logic and CS mathematics                 |
+| Quiz         | Multiple choice with instant feedback    |
 
 Content is **weighted** — quizzes and trivia appear more frequently than other types. Items already shown are tracked per session so you won't see the same card twice in a row. The difficulty (Beginner / Experienced) is also picked randomly each time and shown in the card badge.
 
@@ -83,6 +83,7 @@ Content is **weighted** — quizzes and trivia appear more frequently than other
 ## Installation (Local / Development)
 
 1. Clone or download this repository
+
    ```bash
    git clone https://github.com/Jafar-X/devTab.git
    ```
@@ -128,21 +129,6 @@ All content lives in `data.js` inside the `DATA` object. Each section is a plain
 ```
 
 Same pattern applies to `http`, `snippet`, `trivia`, and `math` arrays. Each entry has a `difficulty` field (`"beginner"` or `"experienced"`) — this is picked randomly at runtime, so just tag your content and it will appear automatically.
-
----
-
-## Publishing to Chrome Web Store
-
-1. Zip the project folder (ensure `manifest.json` is at the root of the zip)
-2. Go to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
-3. Pay the one-time **$5 USD** developer registration fee
-4. Click **Add a new item** and upload the zip
-5. Fill in the store listing: title, description, screenshots, and category
-6. Set the Privacy Policy URL to:
-   ```
-   https://jafar-x.github.io/devTab/privacy-policy.html
-   ```
-7. Submit for review — typically approved within a few days
 
 ---
 
