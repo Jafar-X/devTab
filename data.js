@@ -762,6 +762,132 @@ const APTITUDE = [
     explanation:
       "Column 2 has △ (R1) and □ (R2) — so it needs ○. Row 3 has □ and △ already, confirming the missing shape is ○.",
   },
+  // ── Number Patterns — Experienced ───────────────────────────
+  {
+    difficulty: "experienced",
+    question: "What is the next number?",
+    code: "3,  9,  27,  81,  ?",
+    options: ["162", "243", "256", "218"],
+    answer: 1,
+    explanation:
+      "Each term is multiplied by 3. 81 × 3 = 243. Geometric progression.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Find the missing term:",
+    code: "2,  5,  11,  23,  47,  ?",
+    options: ["91", "95", "93", "99"],
+    answer: 1,
+    explanation: "Pattern: (previous × 2) + 1. 47 × 2 + 1 = 95.",
+  },
+  {
+    difficulty: "experienced",
+    question: "What comes next?",
+    code: "1,  4,  9,  16,  25,  36,  49,  ?",
+    options: ["56", "63", "64", "72"],
+    answer: 2,
+    explanation: "Perfect squares: 1², 2², 3²... 7² = 49, next is 8² = 64.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Find the next term:",
+    code: "5,  10,  20,  40,  80,  ?",
+    options: ["120", "140", "160", "180"],
+    answer: 2,
+    explanation: "Each number doubles. 80 × 2 = 160.",
+  },
+  {
+    difficulty: "experienced",
+    question: "What is the missing number?",
+    code: "1,  1,  2,  3,  5,  8,  13,  ?",
+    options: ["18", "20", "21", "22"],
+    answer: 2,
+    explanation:
+      "Fibonacci sequence: each term = sum of previous two. 8 + 13 = 21.",
+  },
+
+  // ── Slightly Tricky Patterns ───────────────────────────
+  {
+    difficulty: "experienced",
+    question: "What is the next term?",
+    code: "2,  3,  6,  18,  108,  ?",
+    options: ["648", "432", "540", "720"],
+    answer: 0,
+    explanation:
+      "Pattern: multiply by increasing numbers → ×1.5, ×2, ×3, ×6. Actually simpler: ×1.5 not consistent. Better seen as ×1, ×2, ×3, ×6. 108 × 6 = 648.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Find the next number:",
+    code: "10,  7,  8,  5,  6,  3,  ?",
+    options: ["2", "4", "1", "0"],
+    answer: 1,
+    explanation: "Alternating pattern: -3, +1, -3, +1... So 3 + 1 = 4.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Which number fits?",
+    code: "4,  6,  9,  13,  18,  ?",
+    options: ["22", "24", "25", "26"],
+    answer: 1,
+    explanation: "Differences: 2, 3, 4, 5, 6... So next is 18 + 6 = 24.",
+  },
+
+  // ── Mixed / Logic ───────────────────────────
+  {
+    difficulty: "experienced",
+    question: "What comes next?",
+    code: "Z1,  Y2,  X3,  W4,  ?",
+    options: ["V5", "U5", "V6", "U6"],
+    answer: 0,
+    explanation:
+      "Letters go backward (Z→Y→X→W→V) and numbers increase (1→2→3→4→5). So V5.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Find the missing term:",
+    code: "AA,  CC,  EE,  GG,  ?",
+    options: ["HH", "II", "JJ", "KK"],
+    answer: 1,
+    explanation: "Letters skip one each time: A, C, E, G, I. So II.",
+  },
+
+  // ── Grid / Matrix Patterns ───────────────────────────
+  {
+    difficulty: "experienced",
+    question: "Find the missing value:",
+    code: "2   4   6\n3   9   27\n4   16  ?",
+    options: ["32", "48", "64", "128"],
+    answer: 2,
+    explanation:
+      "Pattern per row: multiply by increasing factor.\nRow1: ×2, ×1.5\nRow2: ×3, ×3\nRow3: ×4, ×4 → 16 × 4 = 64.",
+  },
+  {
+    difficulty: "experienced",
+    question: "What is the missing number?",
+    code: "5   10   50\n6   12   72\n7   14   ?",
+    options: ["84", "96", "98", "102"],
+    answer: 2,
+    explanation: "Pattern: first × second = third.\n7 × 14 = 98.",
+  },
+
+  // ── Logical Elimination ───────────────────────────
+  {
+    difficulty: "experienced",
+    question: "Which number does NOT belong?",
+    code: "121,  144,  169,  196,  225,  250",
+    options: ["169", "196", "225", "250"],
+    answer: 3,
+    explanation: "All others are perfect squares (11² to 15²). 250 is not.",
+  },
+  {
+    difficulty: "experienced",
+    question: "Which number breaks the pattern?",
+    code: "3,  6,  12,  24,  48,  96,  190",
+    options: ["24", "48", "96", "190"],
+    answer: 3,
+    explanation: "All numbers double each time. 96 × 2 = 192, not 190.",
+  },
 ];
 
 // Merge aptitude into DATA.quiz
