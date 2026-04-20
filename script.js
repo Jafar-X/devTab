@@ -1,4 +1,4 @@
-// script.js — DevTab Extension Logic (Randomized Version)
+// script.js — DevTab Extension Logic
 
 // ── Constants ────────────────────────────────────────────
 const TYPE_LABELS = {
@@ -9,11 +9,45 @@ const TYPE_LABELS = {
   quiz: "Quiz",
 };
 
-// Optional weighting (better UX)
-const WEIGHTED_TYPES = ["trivia", "trivia", "quiz", "snippet", "http", "math"];
+const WEIGHTED_TYPES = ["trivia", "quiz", "snippet", "http", "math"];
 
 // ── State ────────────────────────────────────────────────
-let usedIndices = {}; // track used items per type
+let doNotRepeat = {
+  http: [],
+  snippet: [],
+  trivia: [],
+  math: [],
+  quiz: [],
+};
+let usedIndices = {};
+let currentType = null;
+let currentIndex = null;
+
+// ── Storage ───────────────────────────────────────────────
+async function loadDoNotRepeat() {
+  const result = await chrome.storage.local.get("devtabDoNotRepeat");
+  if (result.devtabDoNotRepeat) {
+    doNotRepeat = result.devtabDoNotRepeat;
+  }
+}
+
+async function saveDoNotRepeat() {
+  await chrome.storage.local.set({ devtabDoNotRepeat: doNotRepeat });
+}
+
+function markDoNotRepeat(type, index) {
+  if (!doNotRepeat[type].includes(index)) {
+    doNotRepeat[type].push(index);
+    saveDoNotRepeat();
+  }
+}
+
+function markQuizCompleted(index) {
+  if (!doNotRepeat.quiz.includes(index)) {
+    doNotRepeat.quiz.push(index);
+    saveDoNotRepeat();
+  }
+}
 
 // ── Random Picker ────────────────────────────────────────
 function pickRandomAny() {
@@ -25,18 +59,28 @@ function pickRandomAny() {
 
   if (!usedIndices[randomType]) usedIndices[randomType] = [];
 
-  let available = items.filter((_, i) => !usedIndices[randomType].includes(i));
+  // Filter out session-used AND marked as do-not-repeat
+  let available = items.filter(
+    (_, i) =>
+      !usedIndices[randomType].includes(i) && !doNotRepeat[randomType].includes(i)
+  );
 
+  // If no available items, reset session tracking
   if (!available.length) {
     usedIndices[randomType] = [];
-    available = items;
+    available = items.filter((_, i) => !doNotRepeat[randomType].includes(i));
+
+    // If still nothing, all items are marked do-not-repeat
+    if (!available.length) {
+      return null; // No items left to show
+    }
   }
 
   const item = available[Math.floor(Math.random() * available.length)];
   const originalIdx = items.indexOf(item);
   usedIndices[randomType].push(originalIdx);
 
-  return { type: randomType, item };
+  return { type: randomType, item, index: originalIdx };
 }
 
 // ── Greeting ─────────────────────────────────────────────
@@ -64,7 +108,7 @@ function setGreeting() {
       year: "numeric",
       month: "long",
       day: "numeric",
-    },
+    }
   );
 }
 
@@ -113,7 +157,7 @@ function renderQuiz(item) {
   const options = item.options
     .map(
       (opt, i) =>
-        `<button class="quiz-option" data-index="${i}">${opt}</button>`,
+        `<button class="quiz-option" data-index="${i}">${opt}</button>`
     )
     .join("");
 
@@ -126,12 +170,15 @@ function renderQuiz(item) {
 }
 
 // ── Main Render ───────────────────────────────────────────
-function render(type, item) {
-  const difficultyLabel =
-    item.difficulty === "beginner" ? "Beginner" : "Experienced";
+function render(type, item, index) {
+  currentType = type;
+  currentIndex = index;
 
-  document.getElementById("typeBadge").textContent =
-    `${TYPE_LABELS[type]} • ${difficultyLabel}`;
+  const badgeText = type === "snippet"
+    ? `${TYPE_LABELS[type]} • ${item.difficulty === "beginner" ? "Beginner" : "Experienced"}`
+    : TYPE_LABELS[type];
+
+  document.getElementById("typeBadge").textContent = badgeText;
 
   const body = document.getElementById("cardBody");
   body.style.opacity = "0";
@@ -148,16 +195,32 @@ function render(type, item) {
 
     body.innerHTML = renders[type](item);
 
+    // Add "Don't repeat" checkbox for non-quiz items
+    if (type !== "quiz") {
+      body.innerHTML += `
+        <label class="do-not-repeat">
+          <input type="checkbox" id="doNotRepeatCheckbox" />
+          <span>Don't show this again</span>
+        </label>
+      `;
+
+      document.getElementById("doNotRepeatCheckbox").addEventListener("change", (e) => {
+        if (e.target.checked) {
+          markDoNotRepeat(type, index);
+        }
+      });
+    }
+
     body.style.transition = "opacity 0.35s ease, transform 0.35s ease";
     body.style.opacity = "1";
     body.style.transform = "none";
 
-    if (type === "quiz") attachQuizHandlers(item);
+    if (type === "quiz") attachQuizHandlers(item, index);
   }, 150);
 }
 
 // ── Quiz Logic ────────────────────────────────────────────
-function attachQuizHandlers(item) {
+function attachQuizHandlers(item, index) {
   document.querySelectorAll(".quiz-option").forEach((btn) => {
     btn.addEventListener("click", () => {
       const chosen = parseInt(btn.dataset.index, 10);
@@ -175,6 +238,11 @@ function attachQuizHandlers(item) {
 
       fb.className =
         "quiz-feedback-box show " + (correct ? "correct-fb" : "wrong-fb");
+
+      // Mark as completed if answered correctly
+      if (correct) {
+        markQuizCompleted(index);
+      }
     });
   });
 }
@@ -182,10 +250,23 @@ function attachQuizHandlers(item) {
 // ── Load Content ─────────────────────────────────────────
 function loadContent() {
   const result = pickRandomAny();
-  if (!result) return;
 
-  const { type, item } = result;
-  render(type, item);
+  if (!result) {
+    // All items marked as do-not-repeat
+    const body = document.getElementById("cardBody");
+    body.innerHTML = `
+      <div class="all-done">
+        <div class="all-done-icon">✓</div>
+        <div class="all-done-title">You've marked all items as "don't repeat"</div>
+        <div class="all-done-subtitle">New items will appear when the extension updates</div>
+      </div>
+    `;
+    document.getElementById("typeBadge").textContent = "All Done!";
+    return;
+  }
+
+  const { type, item, index } = result;
+  render(type, item, index);
 }
 
 // ── Search ────────────────────────────────────────────────
@@ -193,8 +274,7 @@ document.getElementById("searchInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const q = e.target.value.trim();
     if (q) {
-      window.location.href =
-        "https://www.google.com/search?q=" + encodeURIComponent(q);
+      chrome.search.query({ text: q, disposition: "CURRENT_TAB" });
     }
   }
 });
@@ -284,7 +364,8 @@ function initCanvas() {
 }
 
 // ── Init ──────────────────────────────────────────────────
-function init() {
+async function init() {
+  await loadDoNotRepeat();
   setGreeting();
   initCanvas();
   loadContent();
