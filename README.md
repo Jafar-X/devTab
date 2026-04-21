@@ -1,4 +1,4 @@
-# ⌨ DevTab
+# ⚡ DevFlash
 
 > A Chrome extension that turns every new tab into a learning moment for developers.
 
@@ -9,9 +9,9 @@
 
 ---
 
-## What is DevTab?
+## What is DevFlash?
 
-DevTab replaces Chrome's default new tab page with rotating educational content for programmers. Every time you open a tab, you see something worth knowing — no fluff, no noise, just signal.
+DevFlash replaces Chrome's default new tab page with developer flashcards. Every time you open a tab, you see something worth knowing — HTTP codes, programming concepts, trivia, and quizzes.
 
 No frameworks. No build tools. No server. Just HTML, CSS, and JavaScript.
 
@@ -20,18 +20,20 @@ No frameworks. No build tools. No server. Just HTML, CSS, and JavaScript.
 ## Features
 
 - **HTTP Status Codes** — code, name, category, plain English explanation, and a real-world example
-- **Code Snippets** — practical examples with syntax highlighting (arrow functions, list comprehensions, memoization, and more)
+- **Code Snippets** — practical examples in JavaScript, Python, Java with syntax highlighting
 - **Dev Trivia** — stories from programming history, famous bugs, hardware exploits
 - **Math & Logic Trivia** — Big O, Boolean algebra, the birthday problem, and more
-- **Aptitude Quizzes** — multiple choice questions covering:
+- **Quizzes** — multiple choice questions covering:
   - Number sequences (arithmetic, geometric, Fibonacci, triangular...)
   - Letter sequences
   - Mixed sequences (letters + numbers)
   - Shape & grid pattern recognition
   - CS fundamentals and code output prediction
 
-- **Smart randomization** — randomly picks both content type and difficulty level each time, weighted so quizzes and trivia appear more often
-- **Google Search bar** — fully functional, just like the default new tab
+- **"Don't repeat" checkbox** — mark items you don't want to see again
+- **Quiz auto-mark** — correctly answered quizzes won't appear again
+- **Smart randomization** — weighted content selection
+- **Search bar** — uses Chrome Search API (respects your default search engine)
 - **Keyboard shortcuts** — `→` arrow key to go to the next card
 - **Animated background** — subtle floating particle network
 - **100% offline** — no network requests, no CDN, no tracking
@@ -42,31 +44,33 @@ No frameworks. No build tools. No server. Just HTML, CSS, and JavaScript.
 
 ```
 ┌─────────────────────────────────────────┐
-│ ⌨ DevTab                                       │
+│ ⚡ DevFlash                              │
 ├─────────────────────────────────────────┤
 │                                         │
 │         Good morning.                   │
-│         Saturday, April 19, 2026        │
+│         Monday, April 21, 2026          │
 │                                         │
-│   🔍  Search Google or type a URL    ↵  │
+│   🔍  Search the web or type a URL   ↵  │
 │                                         │
 │  ┌───────────────────────────────────┐  │
-│  │ [HTTP CODE]              ● ○ ○ ○ ○ → │  │
+│  │ [HTTP CODE]                  →     │  │
 │  │                                   │  │
 │  │  404                              │  │
 │  │  Not Found                        │  │
 │  │  4xx Client Error                 │  │
 │  │                                   │  │
 │  │  The server couldn't find the...  │  │
+│  │                                   │  │
+│  │  ☐ Don't show this again          │  │
 │  └───────────────────────────────────┘  │
 └─────────────────────────────────────────┘
 ```
 
 ---
 
-## Content Randomization
+## Content Types
 
-Every new tab (and every `→` click) picks a random content type and a random difficulty level — no fixed cycle, no user setting required.
+Every new tab (and every `→` click) picks a random content type.
 
 | Type         | What you see                             |
 | ------------ | ---------------------------------------- |
@@ -76,7 +80,7 @@ Every new tab (and every `→` click) picks a random content type and a random d
 | Math Trivia  | Logic and CS mathematics                 |
 | Quiz         | Multiple choice with instant feedback    |
 
-Content is **weighted** — quizzes and trivia appear more frequently than other types. Items already shown are tracked per session so you won't see the same card twice in a row. The difficulty (Beginner / Experienced) is also picked randomly each time and shown in the card badge.
+Content is **weighted** — quizzes and trivia appear more frequently.
 
 ---
 
@@ -94,7 +98,7 @@ Content is **weighted** — quizzes and trivia appear more frequently than other
 
 4. Click **Load unpacked** and select the `devTab` folder
 
-5. Open a new tab — DevTab is live
+5. Open a new tab — DevFlash is live
 
 ---
 
@@ -103,10 +107,12 @@ Content is **weighted** — quizzes and trivia appear more frequently than other
 ```
 devTab/
 ├── manifest.json       # Extension config (Manifest V3)
-├── newtab.html         # New tab page markup
+├── devtab.html         # New tab page markup
 ├── style.css           # All styling and animations
-├── script.js           # Logic: randomization, rendering, search, keyboard
-└── data.js             # All content (HTTP codes, snippets, trivia, quizzes)
+├── script.js           # Logic: randomization, rendering, search, storage
+├── data.js             # All content (188 items)
+├── fonts/              # Local fonts (no network requests)
+└── icons/              # Extension icons
 ```
 
 No build step. No `node_modules`. Edit any file and reload the extension to see changes.
@@ -115,28 +121,17 @@ No build step. No `node_modules`. Edit any file and reload the extension to see 
 
 ## Adding Content
 
-All content lives in `data.js` inside the `DATA` object. Each section is a plain array of objects. To add a new quiz question, for example:
+All content lives in `data.js` inside the `DATA` object. Each section is a plain array of objects.
 
-```js
-{
-  difficulty: "beginner",           // "beginner" or "experienced"
-  question: "What comes next?",
-  code: "2,  4,  8,  16,  ?",      // optional — shown as code block
-  options: ["24", "32", "20", "18"],
-  answer: 1,                        // index of correct option (0-based)
-  explanation: "Each number doubles. 16 × 2 = 32."
-}
-```
-
-Same pattern applies to `http`, `snippet`, `trivia`, and `math` arrays. Each entry has a `difficulty` field (`"beginner"` or `"experienced"`) — this is picked randomly at runtime, so just tag your content and it will appear automatically.
+Code snippets have a `difficulty` field (`"beginner"` or `"experienced"`). Other content types (HTTP, trivia, math, quiz) don't have difficulty tags.
 
 ---
 
 ## Privacy
 
-DevTab collects no data. It makes no network requests. It has no analytics, no ads, and no third-party integrations. The only external action it performs is navigating to Google Search when you press Enter in the search bar — a standard browser action.
+DevFlash collects no data. It makes no network requests. It has no analytics, no ads, and no third-party integrations. Search uses Chrome's built-in Search API, respecting your default search engine.
 
-Full privacy policy: [jafar-x.github.io/devTab/privacy-policy.html](https://jafar-x.github.io/devTab/privacy-policy.html)
+Full privacy policy: [privacy-policy.html](privacy-policy.html)
 
 ---
 

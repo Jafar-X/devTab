@@ -1,4 +1,4 @@
-// script.js — DevTab Extension Logic
+// script.js — DevFlash Extension Logic
 
 // ── Constants ────────────────────────────────────────────
 const TYPE_LABELS = {

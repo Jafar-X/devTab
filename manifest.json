@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "DevTab",
+  "name": "DevFlash",
   "version": "1.0",
-  "description": "A developer new tab with HTTP codes, code snippets, trivia, and quizzes.",
+  "description": "Developer education new tab — learn HTTP codes, programming concepts, and test your knowledge daily.",
   "permissions": ["search", "storage"],
   "chrome_url_overrides": {
     "newtab": "devtab.html"

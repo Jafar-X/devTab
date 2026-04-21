@@ -1,4 +1,4 @@
-// data.js — All content for DevTab extension
+// data.js — All content for DevFlash extension
 
 const DATA = {
   http: [
